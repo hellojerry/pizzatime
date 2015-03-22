@@ -1,0 +1,23 @@
+    <!-- Main jumbotron for a primary marketing message or call to action -->
+    <div class="jumbotron vertical-center">
+      <div class="container">
+        <h1>Cowabunga!</h1>
+        <p>{{ location.street_address }}, {{ location.city }}, {{ location.state }} {{ location.zipcode }}</p>
+        <div class='row'>
+        <p><a class="btn btn-primary btn-lg" href="#" role="button">Order Online</a>
+        <a class="btn btn-primary btn-lg" href="{% url 'menu:menu_home' %}" role="button">View Menu</a>
+        {% if not user.is_authenticated %}
+        
+        <a class="btn btn-primary btn-lg" href="{% url 'register'%}" role="button">Log In or Register</a></p>
+      {% else %}
+        <a class='btn btn-primary btn-lg' href='#' role='button'>View Profile</a>
+        <a class='btn btn-info btn-lg' href="{% url 'logout' %}" role='button'>Log Out</a>
+        {% endif %}
+        
+        
+        </div>
+      </div>
+    </div>
+    
+    
+<!--<a class="btn btn-primary btn-lg" href="#" role="button">Sign In</a></p>  -->  

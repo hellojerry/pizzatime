@@ -1,0 +1,267 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block title %}
+ <title>Company Hub</title>
+{% endblock %}
+{% block styles %}
+
+<!-- use JS to override the tabpanels, not css -->
+
+
+
+{% endblock %}
+
+
+{% block jquery %}
+$(function() {
+$( "#dialog" ).dialog({
+     autoOpen: false,
+     modal: true,
+     show: {
+       effect: "blind",
+       duration: 200
+     },
+     hide: {
+       effect: "explode",
+       duration: 200
+     }
+   });
+   
+$( ".opener" ).click(function() {
+  $( "#dialog" ).dialog( "open" );
+     console.log('the second dialog box was opened');
+   });
+   
+    $('.cancel').click(function(){
+        $('h2').remove();
+        $('input:checkbox').removeAttr('checked');
+        $('#dialog').dialog('close');
+    
+    })
+
+$(function() {
+    $( "#dialog-info" ).dialog({
+      autoOpen: false,
+      modal: true,
+      show: {
+        effect: "blind",
+        duration: 200
+      },
+      hide: {
+        effect: "explode",
+        duration: 200
+      }
+    });
+$( ".info" ).click(function() {
+    var orderid = $(this).attr('data-orderid')
+    var lineitems = $(this).attr('data-lineitems')
+        $('#dialog-info p').remove()
+        $('#dialog-info').append('<p>'+ orderid + '</p>');
+        $('#dialog-info').append('<p>'+ lineitems + '</p>');
+      $( "#dialog-info" ).dialog( "open" );
+      
+    });
+
+
+
+$('.updater').click(function(){
+    var orderid = $(this).attr("data-orderid");
+    console.log(orderid)
+     $.get('/orders/order_status/', {order_id: orderid}, function(data){
+               $('#complete'+ '-' + orderid).text(data);
+               console.log('#complete-orderid')
+               console.log('#complete'+ '-' + orderid)
+               console.log(data)
+               $('#updater'+orderid).hide();
+           });
+});
+
+$('.reverser').click(function(){
+    var orderid = $(this).attr("data-orderid");
+    console.log(orderid)
+     $.get('/orders/order_reverse/', {order_id: orderid}, function(data){
+               $('#complete'+ '-' + orderid).text(data);
+               console.log('#complete-orderid')
+               console.log('#complete'+ '-' + orderid)
+               console.log(data)
+               $('#reverser'+orderid).hide();
+           });
+});
+
+    
+
+});
+});
+{% endblock %}
+        
+
+
+{% block content %}
+        </div>
+<div role="tabpanel">
+
+  <!-- Nav tabs -->
+  <ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Today's Orders</a></li>
+    <li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">Yesterday's Orders</a></li>
+    <li role="presentation"><a href="#messages" aria-controls="messages" role="tab" data-toggle="tab">All Outstanding</a></li>
+    
+  </ul>
+
+  <!-- Tab panes -->
+  <div class="tab-content">
+    <div role="tabpanel" class="tab-pane active" id="home">
+        <div class='col-md-12' style='margin-top:3%'>
+                <div class='row' style='margin-bottom: 3%'>
+                        <div class='col-sm-1'>Customer</div>
+                        <div class='col-sm-4'>Address</div>
+                        <div class='col-sm-2'>Phone</div>
+                        <div class='col-sm-1'>Delivery?</div>
+                        <div class='col-sm-1'>Complete?</div>
+                        <div class='col-sm-2'>Time</div>
+                        <div class='col-sm-1'>Date</div>
+                        
+                </div>
+                {% for item in current_orders%}
+                       <div class='row'>
+                
+                <div class='col-sm-1'>
+                        {% if item.last_name != None %}
+                        {{ item.last_name }}, {{ item.first_name }}
+                {% else %}
+                        Anonymous
+                {% endif %}
+                </div>
+                <div class='col-sm-4'>{{ item.street_address }},
+                {{ item.city }}, {{item.state}}, {{ item.zipcode }}</div>
+                <div class='col-sm-2'>{{ item.phone }}</div>
+                <div class='col-sm-1' >{{ item.delivery }}</div>
+                <div class='col-sm-1'><label id='complete-{{item.id}}'>{% if item.complete %} Yes {% else %} No {% endif %}</label></div>
+                <div class='col-sm-1'>{{ item.stamped_time|date:"f A, m/d/Y" }}</div>
+                <!--<div class='col-sm-1'><button class='btn btn-info opener'>View Details</button></div>-->
+                {% if not item.complete %}
+                <div class='col-sm-1'><button data-orderid='{{ item.id }}' id='updater{{ item.id }}' class='btn btn-info updater'>Complete Order</button></div>
+                
+        {% else %}
+                <div class='col-sm-1'><button data-orderid='{{ item.id }}' id='reverser{{ item.id }}' class='btn btn-info reverser'>reverse Order</button></div>
+        {% endif %}
+                </div>
+        {% endfor %}
+                        
+        </div>
+        <br><br><br>
+    </div>
+    <div role="tabpanel" class="tab-pane" id="profile">
+        <div role="tabpanel" class="tab-pane" id="profile">
+        <div class='col-md-12' style='margin-top: 3%'>
+                <div class='row' style='margin-bottom: 3%'>
+                        <div class='col-sm-1'>Customer</div>
+                        <div class='col-sm-4'>Address</div>
+                        <div class='col-sm-2'>Phone</div>
+                        <div class='col-sm-1'>Delivery?</div>
+                        <div class='col-sm-1'>Complete?</div>
+                        <div class='col-sm-2'>Time</div>
+                        <div class='col-sm-1'>Date</div>
+                        
+                </div>
+                {% for item in yesterday_orders %}
+                <div class='row'>
+                
+                <div class='col-sm-1'>
+                        {{ item.last_name }}, {{ item.first_name }}
+                </div>
+                <div class='col-sm-4'>{{ item.street_address }},
+                {{ item.city }}, {{item.state}}, {{ item.zipcode }}</div>
+                <div class='col-sm-2'>{{ item.phone }}</div>
+                <div class='col-sm-1' >{{ item.delivery }}</div>
+                <div class='col-sm-1'><label id='complete-{{item.id}}'>{% if item.complete %} Yes {% else %} No {% endif %}</label></div>
+                <div class='col-sm-1'>{{ item.stamped_time|date:"f A, m/d/Y" }}</div>
+                <!--<div class='col-sm-1'><button class='btn btn-info opener'>View Details</button></div>-->
+                {% if not item.complete %}
+                <div class='col-sm-1'><button data-orderid='{{ item.id }}' id='updater{{ item.id }}' class='btn btn-info updater'>Complete Order</button></div>
+                
+        {% else %}
+                <div class='col-sm-1'><button data-orderid='{{ item.id }}' id='reverser{{ item.id }}' class='btn btn-info reverser'>reverse Order</button></div>
+        {% endif %}
+                </div>
+        {% endfor %}
+        
+        </div>
+        </div><br><br><br>
+        </div>
+    <div role="tabpanel" class="tab-pane" id="messages">
+    <div class='col-md-12' style='margin-top:3%'>
+                <div class='row' style='margin-bottom: 3%'>
+                        <div class='col-sm-1'>Customer</div>
+                        <div class='col-sm-4'>Address</div>
+                        <div class='col-sm-2'>Phone</div>
+                        <div class='col-sm-1'>Delivery?</div>
+                        <div class='col-sm-1'>Complete?</div>
+                        <div class='col-sm-2'>Time</div>
+                        <div class='col-sm-1'>Date</div>
+                        
+                </div>
+                {% for item in outstanding_orders %}
+                       <div class='row'>
+                
+                <div class='col-sm-1'>
+                       <button class='btn btn-default info' data-orderid='{{ item.id }}' data-lineitems='{{item.orderlineitem_set.all}}'> {{ item.last_name }}, {{ item.first_name }}</button>
+                </div>
+                <div class='col-sm-4'>{{ item.street_address }},
+                {{ item.city }}, {{item.state}}, {{ item.zipcode }}</div>
+                <div class='col-sm-2'>{{ item.phone }}</div>
+                <div class='col-sm-1' >{{ item.delivery }}</div>
+                <div class='col-sm-1'><label id='complete-{{item.id}}'>{% if item.complete %} Yes {% else %} No {% endif %}</label></div>
+                <div class='col-sm-1'>{{ item.stamped_time|date:"f A, m/d/Y" }}</div>
+                <!--<div class='col-sm-1'><button class='btn btn-info opener'>View Details</button></div>-->
+                {% if not item.complete %}
+                <div class='col-sm-1'><button data-orderid='{{ item.id }}' id='updater{{ item.id }}' class='btn btn-info updater'>Complete Order</button></div>
+                
+        {% else %}
+                <div class='col-sm-1'><button data-orderid='{{ item.id }}' id='reverser{{ item.id }}' class='btn btn-info reverser'>reverse Order</button></div>
+        {% endif %}
+                </div>
+        {% endfor %}
+           <div class='row'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+           <div class='row'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+           <div class='row'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+           <div class='row'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+        </div>    
+    <br><br><br>
+    </div>
+
+  
+
+</div>
+</div>
+<br><br><br><br><br><br><br><br>
+<div id="dialog" title="View Item">
+ 
+  <div>
+
+        
+        
+        
+        
+        <form method='POST' action='menu_home/add_pizza'>{% csrf_token %} {{ add_pizza_form.as_p }}
+    <input class='btn btn-danger' type='submit' value='Add to Order'/></form>
+        
+        
+    <button class='btn btn-warning cancel'>Cancel</button>
+    
+    
+
+  </div>
+</div>
+
+
+<div id="dialog-info" title="Description">
+ 
+  <div>
+
+      
+  </div>
+</div> 
+
+{% endblock %}
+

@@ -1,0 +1,62 @@
+{% include 'base.html'%}
+
+
+
+{% block top-head %}
+    {% include 'top_head.html' %}
+{% endblock %}
+{% block content %}
+    
+<br>
+{% if new_auth == False %}
+<div class='col-lg-5 col-lg-offset-1'>
+
+<h2>Returning Customer? Login Here!</h2>
+
+<form method='POST' action=''>{% csrf_token %}
+{{ login_form.as_p }}
+
+<input class='btn btn-default' type='submit'>
+
+
+
+</form>   
+    
+</div>    
+    
+
+<div class='col-lg-5 col-lg-offset-1'>
+
+<h2>New Here?</h2>
+
+<form method='POST' action=''>{% csrf_token %}
+{{ register_form.as_p }}
+
+<input class='btn btn-default' type='submit'>
+
+
+
+</form>   
+    
+</div>
+
+{% elif new_auth == True %}
+
+<div class='col-lg-4 col-lg-offset-4'>
+
+<h2>Login Here!</h2>
+
+<form method='POST' action=''>{% csrf_token %}
+{{ login_form.as_p }}
+
+<input class='btn btn-default' type='submit'>
+
+
+
+</form>   
+    
+</div>
+
+{% endif %}
+    
+{% endblock %}

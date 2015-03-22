@@ -1,0 +1,118 @@
+{% extends 'base.html'%}
+
+{% block title %}
+    <title>Thank you! </title>
+{% endblock %}
+
+{% block jquery%}
+
+
+$(function() {
+
+
+    $( "#receipt" ).ready(function(){
+      $('#receipt').hide();
+    });
+
+
+
+    
+$('#emailer').click(function(){
+    $('#emailer').hide();
+    $('#receipt').show();
+    
+});
+
+
+
+
+
+
+});
+{% endblock %}
+{% block top-head %}
+
+{% endblock %}
+
+
+{% block content %}
+    </div>
+<div id='top-head' style='position: static; margin: 0px;top: 0;left: 0;right: 0;
+    height: 200px;background-image: url({{MEDIA_URL}}{{ object.location.image}});'>
+    
+       <div class='col-sm-3'></div>
+       <div class='col-sm-6' style='text-align: center; color: white'>
+        <h1>Cowabunga!</h1>
+        
+        <div class='row'>
+        <h3>{{ object.location.street_address }}, {{ object.location.city }}, {{ object.location.state }} {{ object.location.zipcode }}</h3>
+        </div>
+        <div class='row'>
+        <h3><button class='btn btn-primary'>{{ object.location.phone}}</button></h3>
+        </div>
+        
+        
+      </div>
+</div>
+    
+    
+    
+<div class=col-lg-3></div>    
+
+
+<div class=col-lg-6>
+    
+    <div class='row'>
+        <h1>Awesome, Dude!</h1>
+        
+
+        
+        <p>Your order confirmation number is <strong>{{ object.conf_number }}.</strong>
+        {% if object.delivery == True %}
+            
+        Delivery should take between thirty minutes and an hour.
+    {% else %}
+        Your order will be ready for pickup within forty minutes.</p>
+    {% endif %}
+        
+    <br/>
+    
+    {% if request.user.is_authenticated == True %}
+        <a class ='btn btn-success' id='emailer'
+           href='{% url 'orders:receipt_email' object.id %}'>Send Receipt Email</a>
+        
+    <p id='receipt'> Confirmation email sent!</p>    
+ {% endif %}   
+        
+    </div>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</div>
+
+
+
+
+
+
+<div class=col-lg-3>
+    <div class='row'><h1>&nbsp;&nbsp;</h1></div>
+    <div class='row'><h1>&nbsp;&nbsp;</h1></div>
+    <div class='row'><h1>&nbsp;&nbsp;</h1></div>
+    <div class='row'><h1>&nbsp;&nbsp;</h1></div>
+    <div class='row'><h1>&nbsp;&nbsp;</h1></div>
+</div>    
+    <br><br><br><br><br><br><br><br>
+    <div class='container'>
+{% endblock %}
+{% block footer %}
+    {% include 'footer.html'%}
+    </div>
+{% endblock %}
+    

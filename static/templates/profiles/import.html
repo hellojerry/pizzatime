@@ -1,0 +1,24 @@
+{% extends 'admin/base_site.html' %}
+
+
+{% block breadcrumbs %}<div class="breadcrumbs"><a href="/admin/">
+</a> </div>{% endblock %}
+
+{% block content %}
+    <div style='margin-left: 40%; margin-right: 40%; margin-top: 5%; margin-bottom: 15%'>
+
+        <h1>Upload the Zip Code Project CSV file here - only do it once.</h1>
+        <br/>
+        <br/>
+        <h1>Go to this <a href='http://sourceforge.net/projects/zips/'>link</a>, download
+        it as a csv, and save it somewhere locally - preferably under the static/zip directory.</h1>
+        <br/>
+        <br/>
+        
+        <form method='POST' action='' enctype='multipart/form-data'>{% csrf_token %}
+    {{ form.as_p }}
+    <button><input type='submit' value='save'</button>
+    </form>
+
+    </div>
+{% endblock %}

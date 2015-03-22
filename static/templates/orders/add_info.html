@@ -1,0 +1,38 @@
+{% include 'base.html'%}
+{% block title %}
+    <title>Hey! Wait a Second!</title>
+{% endblock %}
+
+
+{% block top-head %}
+    {% include 'top_head.html' %}
+{% endblock %}
+{% block content %}
+    
+    <br>
+<div class='col-lg-3'></div>
+<div class='col-lg-6' style='text-align: center'>
+    <h1>Hey! Wait a Second!</h1>
+    <p>We'll need your name and phone number if something comes up!</p>
+    
+    
+<form method='POST' action=''>{% csrf_token %}    
+{{ form.as_p }}
+<input class='btn btn-default' type='submit'>
+</form>
+
+
+<br><br>
+
+<p>Click <a href='{% url 'register' %}'>here</a>if you'd like to create an account or sign in.</p>
+
+</div>
+<div class='col-lg-3'></div>
+
+
+
+
+
+{% endblock %}
+
+

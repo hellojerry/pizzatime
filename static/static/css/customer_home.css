@@ -1,0 +1,84 @@
+body {
+	font-family:Helvetica,sans-serif;
+}
+
+.bg {
+	position:fixed;
+	width:100%;
+	height:500px;
+	z-index:-100;
+}
+
+.bg > div {
+	position:absolute;
+	top:0;
+	left:0;
+	width:100%;
+	height:100%;
+	background-repeat:no-repeat;
+	background-size:cover;
+	background-position:center center;
+}
+
+.bg-normal {
+	z-index:10;
+	background-image: url(http://www.binaryoptionsexplained.com/wp-content/uploads/2013/11/COWABUNGA.jpg);
+}
+
+.bg-blur {
+	z-index:20;
+	background-image:url(http://cloud.bassta.bg/blur/bg-blur.jpg);
+	opacity:0;
+}
+
+.container {
+	z-index:2000;
+}
+
+.container header {
+	position:relative;
+	width:100%;
+	height:500px;
+}
+
+.slogan-holder {
+	position:relative;
+	width:100%;
+	height:440px;
+}
+
+.nav-holder {
+	position:relative;
+	width:100%;
+	height:60px;
+}
+
+ul.nav {
+	width:640px;
+	height:60px;
+	margin:0 auto;
+	border-top:1px solid #dededc;
+	list-style:none;
+	text-align:center;
+}
+
+ul.nav li {
+	display:inline-block;
+	padding-top:16px;
+	padding-right:40px;
+}
+
+ul.nav li a {
+	text-decoration:none;
+	color:#fff;
+	font-size:18px;
+}
+
+.content {
+	height:2000px;
+	background-color:#fff;
+}
+
+.disable-pointer-events {
+	pointer-events:none!important;
+}

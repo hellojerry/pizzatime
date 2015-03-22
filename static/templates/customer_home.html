@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block title %}
+ <title>Cowabunga! Pizzeria</title>
+{% endblock %}
+{% block styles %}
+    
+    
+
+{% endblock %}
+{% block jumbotron %}
+   {% include 'jumbotron.html'%}
+{% endblock %}
+{% block content %}
+
+
+<div class="row">
+        <div class='col-md-4' style='text-align: center'>
+            <h1>Details</h1>
+                <ul class='list-group'>
+                    <li class='list-group-item'>{{ location.phone}}</li>
+                    <li class='list-group-item'>Delivery: $2.50</li>
+                    <li class='list-group-item'>Minimum Order: $10.00</li>
+                   
+                </ul>
+                
+        </div>
+        <div class='col-md-4' style='text-align: center'>
+            <h1>Hours of Operation</h1>
+                <table class='table table-condensed'>
+                    <tr>
+                        <td style='text-align: left'>Sunday</td>
+                        <td style='text-align: right'>{{ location.sunday_open}} - {{ location.sunday_close }}</td>
+                    </tr>
+                    <tr>
+                        <td style='text-align: left'>Monday</td>
+                        <td style='text-align: right'>{{ location.monday_open}} - {{ location.monday_close }}</td>
+                    </tr>
+                    <tr>
+                        <td style='text-align: left'>Tuesday</td>
+                        <td style='text-align: right'>{{ location.tuesday_open}} - {{ location.tuesday_close }}</td>
+                    </tr>
+                    <tr>
+                        <td style='text-align: left'>Wednesday</td>
+                        <td style='text-align: right'>{{ location.wednesday_open}} - {{ location.wednesday_close }}</td>
+                    </tr>
+                    <tr>
+                        <td style='text-align: left'>Thursday</td>
+                        <td style='text-align: right'>{{ location.thursday_open }} - {{ location.thursday_close }}</td>
+                    </tr>
+                    <tr>
+                        <td style='text-align: left'>Friday</td>
+                        <td style='text-align: right'>{{ location.friday_open }} - {{ location.friday_close }}</td>
+                    </tr>
+                    <tr>
+                        <td style='text-align: left'>Saturday</td>
+                        <td style='text-align: right'>{{ location.saturday_open}} - {{ location.saturday_close }}</td>
+                    </tr>
+                    
+                </table>
+                
+        </div>
+        <div class='col-md-4' style='text-align: center'>
+            <h1>About Us</h1>
+<p>{{ location.message }} </p>
+
+            
+        </div>
+</div>
+
+    
+    
+    
+    
+
+
+{% endblock %}
+
+    <div class='container'>
+
+{% block footer %}
+    {% include 'footer.html'%}
+    </div>
+{% endblock %}

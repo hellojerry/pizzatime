@@ -1,0 +1,883 @@
+{% extends 'base.html'%}
+
+{% block title %}
+    <title>It's a Menu! </title>
+{% endblock %}
+
+{% block styles %}
+
+
+
+{% endblock %}
+
+{% block jquery %}
+
+
+$(function() {
+    
+    $( "#accordion" ).accordion({
+      icons: false,
+      collapsible: true,
+      heightStyle: "content",
+      active: false
+    });
+    $(".ui-accordion-header").css("background","white");
+    $(".ui-accordion-header").css("border","0");
+    $(".ui-accordion-content").css("border","0");
+    });
+
+
+
+
+$('.pickup').click(function(){
+    var orderid = $(this).attr("data-orderid");
+    $.ajax({
+      type:'GET',
+      url:'/menu/set_pickup/',
+      success: function(data){
+      
+      var subtotal = parseFloat(data.subtotal)
+      var taxes = parseFloat(data.taxes)
+      var total = parseFloat(data.total)
+      $('tr.delivery-charge').hide()
+      $('td.subtotal').text('$' + subtotal.toFixed(2))
+      $('td.taxes').text('$' + taxes.toFixed(2))
+      $('td.total').text('$' + total.toFixed(2))
+      $('.pickup').removeClass('btn-default')
+      $('.pickup').addClass('btn-success')
+      $('.delivery').removeClass('btn-success')
+      $('.delivery').addClass('btn-default')
+     }
+     })
+});    
+
+$('.delivery').click(function(){
+    var orderid = $(this).attr("data-orderid");
+    $.ajax({
+    type: 'GET',
+    url:'/menu/set_delivery/',
+    success: function(data){
+    var delivery_charge = parseFloat(data.delivery_charge)
+    var subtotal = parseFloat(data.subtotal)
+    var taxes = parseFloat(data.taxes)
+    var total = parseFloat(data.total)
+    $('td.delivery-charge').text('$' + delivery_charge.toFixed(2))
+    $('tr.delivery-charge').show()
+    $('td.subtotal').text('$' + subtotal.toFixed(2))
+    $('td.taxes').text('$' + taxes.toFixed(2))
+    $('td.total').text('$' + total.toFixed(2))
+    $('.pickup').removeClass('btn-success')
+    $('.pickup').addClass('btn-default')
+    $('.delivery').removeClass('btn-default')
+    $('.delivery').addClass('btn-success')
+    }
+    })
+
+});
+
+
+
+ $(function() {
+    $( "#dialog" ).dialog({
+      autoOpen: false,
+      modal: true,
+      show: {
+        effect: "blind",
+        duration: 200
+      },
+      hide: {
+        effect: "explode",
+        duration: 200
+      }
+    });
+    $( "#dialog-2" ).dialog({
+      autoOpen: false,
+      modal: true,
+      show: {
+        effect: "blind",
+        duration: 200
+      },
+      hide: {
+        effect: "explode",
+        duration: 200
+      }
+    });
+    $( "#dialog-check-address" ).dialog({
+      autoOpen: false,
+      modal: true,
+      show: {
+        effect: "blind",
+        duration: 200
+      },
+      hide: {
+        effect: "explode",
+        duration: 200
+      }
+    });
+    $( "#dialog-add-note" ).dialog({
+      autoOpen: false,
+      modal: true,
+      width: 400,
+      
+      
+      show: {
+        effect: "blind",
+        duration: 200
+      },
+      hide: {
+        effect: "explode",
+        duration: 200
+      }
+    });
+    
+    $( ".add-note" ).click(function() {
+      $('.ui-dialog-titlebar').hide();
+      $( "#dialog-add-note" ).dialog( "open" );
+      
+    });
+ 
+    $( ".opener" ).click(function() {
+      $('.ui-dialog-titlebar').hide();
+      $( "#dialog" ).dialog( "open" );
+      console.log('the second dialog box was opened');
+    });
+
+    $( ".check-address" ).click(function() {
+      $('.ui-dialog-titlebar').hide();
+      $( "#dialog-check-address" ).dialog( "open" );
+      console.log('the second dialog box was opened');
+    });    
+
+  
+    $('.second').click(function(){
+        var size_id = $(this).attr('size-type')
+        var product_id = $(this).attr('data-id')
+        var name_id = $(this).attr('name-id')
+        var pk_id = $(this).attr('pk-id')
+        console.log(product_id)
+        console.log(size_id)
+        console.log(name_id)
+        $('#dialog').prepend('<h2>'+ name_id +' - '+ size_id+'</h2>');
+        $('input#id_product').val(product_id);
+        $('input#id_size').val(size_id);
+        $('#dialog').dialog('open');
+        
+    })
+    
+    $('.pizza-editor').click(function(){
+        var line_id = $(this).attr('line-id')
+        var name_id = $(this).attr('name-id')
+        var size_id = $(this).attr('size-type')
+        console.log(line_id)
+        $('#dialog-2').prepend('<h2>'+ name_id +' - '+ size_id+'</h2>');
+        $('input#id_order_line').val(line_id)
+        $('#dialog-2').dialog('open');
+        
+    })
+    
+    
+    
+    $('.cancel').click(function(){
+        $('h2').remove();
+        $('input:checkbox').removeAttr('checked');
+        $('#dialog').dialog('close');
+    
+    })
+    
+    $('.cancel').click(function(){
+
+        $('input:checkbox').removeAttr('checked');
+        $('#dialog-2').dialog('close');
+    
+    })
+    $('.cancel').click(function(){
+
+        $('input:checkbox').removeAttr('checked');
+        $('#dialog-check-address').dialog('close');
+    
+    })
+    $('.cancel').click(function(){
+
+        
+        $('#dialog-add-note').dialog('close');
+    
+    })
+    
+    
+    $('.subtotal').click(function(){
+        var sList = '';
+        
+        $('input[type=checkbox]').each(function(){
+            var sThisVal = (this.checked ? '1' : '0');
+            sList += (sList=='' ? sThisVal : ', ' + sThisVal);
+        })
+        console.log(sList);
+       
+    })
+
+  });
+
+  
+
+
+
+
+
+{% endblock %}
+{% block top-head %}
+    {% include 'top_head.html' %}
+{% endblock %}
+{% block content %}
+    
+
+
+
+
+    
+<div id="accordion" class='col-md-7'>
+  <h1><font size='6' color='green'>Pizza</font> <button type="button" class="btn btn-default pull-right" aria-label="Right Align">
+  <span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span>
+</button></h1>
+  <div>
+    {%for item in specialties %}
+
+        <div class='row'>
+            <div class='col-xs-6'>
+                <h3>{{ item.name}} </h3>
+            <p>{{ item.description }}</p>
+            </div>
+            <div class='col-xs-6'>
+            <table class='pull-right'>
+                {% if address_checked == True %}
+                <tr><td><button type='button' class='btn btn-success  second'
+                                name-id='{{ item }}'data-id='{{ item.get_small.id }}' size-type='SMALL'
+                                style='width: 150px'>Small: ${{ item.small_price }}</button></td></tr>
+                <tr><td><button type='button' class='btn btn-success  second'
+                                name-id='{{ item }}'data-id='{{item.get_medium.id }}' size-type='MEDIUM'
+                                style='width: 150px'>Medium: ${{ item.medium_price }}</button></td></tr>
+                <tr><td><button type='button' class='btn btn-success  second'
+                                name-id='{{ item }}'data-id='{{item.get_large.id }}' size-type='LARGE'
+                                style='width: 150px'>Large: $ {{ item.large_price }} </button></td></tr>
+                <tr><td><button type='button' class='btn btn-success  second'
+                                name-id='{{ item }}'data-id='{{item.get_xl.id }}' size-type='XL'
+                                style='width: 150px'>XL: ${{ item.xl_price }}</button></td></tr>
+                <tr><td><button type='button' class='btn btn-success  second'
+                                name-id='{{ item }}'data-id='{{item.get_jumbo.id }}' size-type='JUMBO'
+                                style='width: 150px'>Jumbo: ${{ item.jumbo_price }}</button></td></tr>
+                {% elif address_checked == False %}
+                    <tr><td><button type='button' class='btn btn-success opener '
+                                name-id='{{ item }}'data-id='{{item.get_small }}'
+                                style='width: 150px'>Small: ${{ item.small_price }}</button></td></tr>
+                <tr><td><button type='button' class='btn btn-success opener '
+                                name-id='{{ item }}'data-id='{{item.get_medium }}'
+                                style='width: 150px'>Medium: ${{ item.medium_price }}</button></td></tr>
+                <tr><td><button type='button' class='btn btn-success opener '
+                                name-id='{{ item }}'data-id='{{item.get_large }}'
+                                style='width: 150px'>Large: $ {{ item.large_price }}</button></td></tr>
+                <tr><td><button type='button' class='btn btn-success opener '
+                                name-id='{{ item }}'data-id='{{item.get_xl }}'
+                                style='width: 150px'>XL: ${{ item.xl_price }}</button></td></tr>
+                <tr><td><button type='button' class='btn btn-success opener '
+                                name-id='{{ item }}'data-id='{{item.get_jumbo }}'
+                                style='width: 150px'>Jumbo: ${{ item.jumbo_price }}</button></td></tr>
+                    
+                {% endif %}
+
+                
+                
+                
+                
+
+            </table> 
+            </div>
+        </div>
+        <hr/>
+
+
+{% endfor %}
+  </div>
+  <h1><font size='6' color='green'>Breadsticks</font> <button type="button" class="btn btn-default pull-right" aria-label="Right Align">
+  <span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span>
+</button></h1>
+<div>
+    {%for item in breadsticks %}
+
+        <div class='row'>
+            <div class='col-xs-6'>
+                <h3>{{ item.name}} </h3>
+            <p>{{ item.description }}</p>
+            </div>
+            <div class='col-xs-6'>
+            <table class='pull-right'>
+                {% if address_checked == True %}
+                <tr><td><a href='{% url 'menu:add_entree' item.get_small.id %}'class='btn btn-success'
+                                
+                                style='width: 150px; color:white; font-size: medium'>Small: ${{ item.small_price }}</a></td></tr>
+
+                <tr><td><a href='{% url 'menu:add_entree' item.get_large.id %}'class='btn btn-success'
+                                
+                                style='width: 150px; color:white; font-size: medium'>Large: ${{ item.large_price }}</a></td></tr>
+                {% elif address_checked == False %}
+                    <tr><td><button type='button' class='btn btn-success opener '
+                                name-id='{{ item }}'data-id='{{item.get_small }}'
+                                style='width: 150px'>Small: ${{ item.small_price }}</button></td></tr>
+
+                <tr><td><button type='button' class='btn btn-success opener '
+                                name-id='{{ item }}'data-id='{{item.get_large }}'
+                                style='width: 150px'>Large: $ {{ item.large_price }}</button></td></tr>
+
+                    
+                {% endif %}
+
+                
+                
+                
+                
+
+            </table> 
+            </div>
+        </div>
+        <hr/>
+
+
+{% endfor %}
+  </div>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <h1><font size='6' color='green'>Wings</font> <button type="button" class="btn btn-default pull-right" aria-label="Right Align">
+  <span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span>
+</button></h1>
+<div>
+    {%for item in wings %}
+
+        <div class='row'>
+            <div class='col-xs-6'>
+                <h3>{{ item.name}} </h3>
+            <p>{{ item.description }}</p>
+            </div>
+            <div class='col-xs-6'>
+            <table class='pull-right'>
+                {% if address_checked == True %}
+                <tr><td><a href='{% url 'menu:add_entree' item.get_small.id %}'class='btn btn-success'
+                                
+                                style='width: 150px; color:white; font-size: medium'>Small: ${{ item.small_price }}</a></td></tr>
+
+                <tr><td><a href='{% url 'menu:add_entree' item.get_large.id %}'class='btn btn-success'
+                                
+                                style='width: 150px; color:white; font-size: medium'>Large: ${{ item.large_price }}</a></td></tr>
+                {% elif address_checked == False %}
+                    <tr><td><button type='button' class='btn btn-success opener '
+                                name-id='{{ item }}'data-id='{{item.get_small }}'
+                                style='width: 150px'>Small: ${{ item.small_price }}</button></td></tr>
+
+                <tr><td><button type='button' class='btn btn-success opener '
+                                name-id='{{ item }}'data-id='{{item.get_large }}'
+                                style='width: 150px'>Large: $ {{ item.large_price }}</button></td></tr>
+
+                    
+                {% endif %}
+
+                
+                
+                
+                
+
+            </table> 
+            </div>
+        </div>
+        <hr/>
+
+
+{% endfor %}
+  </div>
+
+  
+  <h1><font size='6' color='green'>Salads</font> <button type="button" class="btn btn-default pull-right" aria-label="Right Align">
+  <span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span>
+</button></h1>
+<div>
+    {%for item in salads %}
+
+        <div class='row'>
+            <div class='col-xs-6'>
+                <h3>{{ item.name}} </h3>
+            <p>{{ item.description }}</p>
+            </div>
+            <div class='col-xs-6'>
+            <table class='pull-right'>
+                {% if address_checked == True %}
+                <tr><td><a href='{% url 'menu:add_entree' item.get_small.id %}'class='btn btn-success'
+                                
+                                style='width: 150px; color:white; font-size: medium'>Small: ${{ item.small_price }}</a></td></tr>
+
+                <tr><td><a href='{% url 'menu:add_entree' item.get_large.id %}'class='btn btn-success'
+                                
+                                style='width: 150px; color:white; font-size: medium'>Large: ${{ item.large_price }}</a></td></tr>
+                {% elif address_checked == False %}
+                    <tr><td><button type='button' class='btn btn-success opener '
+                                name-id='{{ item }}'data-id='{{item.get_small }}'
+                                style='width: 150px'>Small: ${{ item.small_price }}</button></td></tr>
+
+                <tr><td><button type='button' class='btn btn-success opener '
+                                name-id='{{ item }}'data-id='{{item.get_large }}'
+                                style='width: 150px'>Large: $ {{ item.large_price }}</button></td></tr>
+
+                    
+                {% endif %}
+
+                
+                
+                
+                
+
+            </table> 
+            </div>
+        </div>
+        <hr/>
+
+
+{% endfor %}
+  </div>
+
+  <h1><font size='6' color='green'>Soups</font> <button type="button" class="btn btn-default pull-right" aria-label="Right Align">
+  <span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span>
+</button></h1>
+<div>
+    {%for item in soups %}
+
+        <div class='row'>
+            <div class='col-xs-6'>
+                <h3>{{ item.name}} </h3>
+            <p>{{ item.description }}</p>
+            </div>
+            <div class='col-xs-6'>
+            <table class='pull-right'>
+                {% if address_checked == True %}
+                <tr><td><a href='{% url 'menu:add_entree' item.get_small.id %}'class='btn btn-success'
+                                
+                                style='width: 150px; color:white; font-size: medium'>Small: ${{ item.small_price }}</a></td></tr>
+
+                <tr><td><a href='{% url 'menu:add_entree' item.get_large.id %}'class='btn btn-success'
+                                
+                                style='width: 150px; color:white; font-size: medium'>Large: ${{ item.large_price }}</a></td></tr>
+                {% elif address_checked == False %}
+                    <tr><td><button type='button' class='btn btn-success opener '
+                                name-id='{{ item }}'data-id='{{item.get_small }}'
+                                style='width: 150px'>Small: ${{ item.small_price }}</button></td></tr>
+
+                <tr><td><button type='button' class='btn btn-success opener '
+                                name-id='{{ item }}'data-id='{{item.get_large }}'
+                                style='width: 150px'>Large: $ {{ item.large_price }}</button></td></tr>
+
+                    
+                {% endif %}
+
+                
+                
+                
+                
+
+            </table> 
+            </div>
+        </div>
+        <hr/>
+
+
+{% endfor %}
+  </div>
+
+  <h1><font size='6' color='green'>Sandwiches</font> <button type="button" class="btn btn-default pull-right" aria-label="Right Align">
+  <span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span>
+</button></h1>
+<div>
+    {%for item in sandwiches %}
+
+        <div class='row'>
+            <div class='col-xs-6'>
+                <h3>{{ item.name}} </h3>
+            <p>{{ item.description }}</p>
+            </div>
+            <div class='col-xs-6'>
+            <table class='pull-right'>
+                {% if address_checked == True %}
+                <tr><td><a href='{% url 'menu:add_entree' item.get_small.id %}'class='btn btn-success'
+                                
+                                style='width: 150px; color:white; font-size: medium'>Small: ${{ item.small_price }}</a></td></tr>
+
+                <tr><td><a href='{% url 'menu:add_entree' item.get_large.id %}'class='btn btn-success'
+                                
+                                style='width: 150px; color:white; font-size: medium'>Large: ${{ item.large_price }}</a></td></tr>
+                {% elif address_checked == False %}
+                    <tr><td><button type='button' class='btn btn-success opener '
+                                name-id='{{ item }}'data-id='{{item.get_small }}'
+                                style='width: 150px'>Small: ${{ item.small_price }}</button></td></tr>
+
+                <tr><td><button type='button' class='btn btn-success opener '
+                                name-id='{{ item }}'data-id='{{item.get_large }}'
+                                style='width: 150px'>Large: $ {{ item.large_price }}</button></td></tr>
+
+                    
+                {% endif %}
+
+                
+                
+                
+                
+
+            </table> 
+            </div>
+        </div>
+        <hr/>
+
+
+{% endfor %}
+  </div>
+
+  <h1><font size='6' color='green'>Pasta</font> <button type="button" class="btn btn-default pull-right" aria-label="Right Align">
+  <span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span>
+</button></h1>
+<div>
+    {%for item in pasta_dishes %}
+
+        <div class='row'>
+            <div class='col-xs-6'>
+                <h3>{{ item.name}} </h3>
+            <p>{{ item.description }}</p>
+            </div>
+            <div class='col-xs-6'>
+            <table class='pull-right'>
+                {% if address_checked == True %}
+                <tr><td><a href='{% url 'menu:add_entree' item.get_small.id %}'class='btn btn-success'
+                                
+                                style='width: 150px; color:white; font-size: medium'>Small: ${{ item.small_price }}</a></td></tr>
+
+                <tr><td><a href='{% url 'menu:add_entree' item.get_large.id %}'class='btn btn-success'
+                                
+                                style='width: 150px; color:white; font-size: medium'>Large: ${{ item.large_price }}</a></td></tr>
+                {% elif address_checked == False %}
+                    <tr><td><button type='button' class='btn btn-success opener '
+                                name-id='{{ item }}'data-id='{{item.get_small }}'
+                                style='width: 150px'>Small: ${{ item.small_price }}</button></td></tr>
+
+                <tr><td><button type='button' class='btn btn-success opener '
+                                name-id='{{ item }}'data-id='{{item.get_large }}'
+                                style='width: 150px'>Large: $ {{ item.large_price }}</button></td></tr>
+
+                    
+                {% endif %}
+
+                
+                
+                
+                
+
+            </table> 
+            </div>
+        </div>
+        <hr/>
+
+
+{% endfor %}
+  </div>
+
+  <h1><font size='6' color='green'>Beverages</font> <button type="button" class="btn btn-default pull-right" aria-label="Right Align">
+  <span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span>
+</button></h1>
+<div>
+    {%for item in beverages %}
+
+        <div class='row'>
+            <div class='col-xs-6'>
+                <h3>{{ item.name}} </h3>
+            <p>{{ item.description }}</p>
+            </div>
+            <div class='col-xs-6'>
+            <table class='pull-right'>
+                {% if address_checked == True %}
+                <tr><td><a href='{% url 'menu:add_entree' item.get_small.id %}'class='btn btn-success'
+                                
+                                style='width: 150px; color:white; font-size: medium'>Small: ${{ item.small_price }}</a></td></tr>
+
+                <tr><td><a href='{% url 'menu:add_entree' item.get_large.id %}'class='btn btn-success'
+                                
+                                style='width: 150px; color:white; font-size: medium'>Large: ${{ item.large_price }}</a></td></tr>
+                {% elif address_checked == False %}
+                    <tr><td><button type='button' class='btn btn-success opener '
+                                name-id='{{ item }}'data-id='{{item.get_small }}'
+                                style='width: 150px'>Small: ${{ item.small_price }}</button></td></tr>
+
+                <tr><td><button type='button' class='btn btn-success opener '
+                                name-id='{{ item }}'data-id='{{item.get_large }}'
+                                style='width: 150px'>Large: $ {{ item.large_price }}</button></td></tr>
+
+                    
+                {% endif %}
+
+                
+                
+                
+                
+
+            </table> 
+            </div>
+        </div>
+        <hr/>
+
+
+{% endfor %}
+  </div>
+    
+    
+
+</div>
+
+<div class='col-md-1'></div>
+<div class='col-md-4'>
+    
+    <div class='row'>
+        <h1><font size='6' color='green'>Order Details</font> {% if address_checked == True%} <button type='button' class='btn btn-warning check-address'>Change My Address</button>{% endif %}</h1>
+        {% if delivery_available == True and address_checked == True %}
+          <h5>{{ street_address }}, {{city}}, {{state}}, {{zipcode}}</h5>
+          <h5>Delivery is available!</h5>
+          <div class="btn-group-horizontal" role="group" aria-label="...">
+        
+            {% if order.delivery == True %}
+            <button data-orderid='{{ order.id }}' class='btn btn-success delivery'>Delivery </button>
+        
+            <button data-orderid='{{ order.id }}' class='btn btn-default pickup'>Pickup</button>
+          {% else %}
+            <button data-orderid='{{ order.id }}' class='btn btn-default delivery'>Delivery </button>
+        
+            <button data-orderid='{{ order.id }}' class='btn btn-success pickup'>Pickup</button>
+          {% endif %}
+            <button class='btn btn-danger add-note'>Add Note</button>
+    </div>
+   
+    <div class='row'>
+        {% elif delivery_available == False and address_checked == True %}
+        <h5>Sorry, we don't deliver to your location. Try a different location!</h5>
+      
+    {% endif %}
+    
+</div>      
+        <h1><font size='6' color='green'>Order Items</font></h1>
+        
+        {% if order %}
+        <table class='col-xs-12'>
+          <div class='row'>
+          
+          
+          {% for item in line_items %}
+            <div class='row'>
+          <tr><td>{{ item.size }} {{ item }}</td><td class='pull-right'>${{ item.line_price|floatformat:2 }}</td></tr>
+          
+          
+        <tr><td></td><td></td></tr>
+        
+          
+            {% for topping in item.toppings.all %}
+          <tr style='color:gray'><td><li>{{ topping }} ${{ topping.price|floatformat:2 }}</li></td></tr>
+        {% endfor %}
+          
+          
+          <tr><td>&nbsp;</td><td>      </td></tr>
+          <tr><td>
+          {% if item.product_type == 'PIZZA'%}
+          <button class='btn btn-info pizza-editor' line-id='{{ item.id }}' size-type='{{ item.size }}' name-id='{{ item.product }}'>Edit</button>
+          
+          <a href='menu_home/delete_line_item/{{item.id}}'><button class='btn btn-danger' >Delete</button></a>
+          
+          </td>
+          {% else %}
+            <a href='menu_home/delete_line_item/{{item.id}}'><button class='btn btn-danger' >Delete</button></a>
+          {% endif %}
+            <td>&nbsp;</td></tr>
+          <td>&nbsp;</td></tr>
+          
+          
+          
+        
+          </div>
+        {% endfor %}
+      {% endif %}
+      
+        </div>
+      <hr/>
+      </table>
+      
+        
+      
+        
+        
+    </div>
+    {% if order %}
+    <div class='row'>
+      <table class='col-xs-12'>
+        
+          <tr><td class='pull-left'>&nbsp;</td><td>      </td></tr>
+         
+          <tr class='delivery-charge'><td class='pull-left'>Delivery Fee: </td><td class='pull-right delivery-charge'>${{ order.get_delivery_charge|floatformat:2}}</td></tr>
+        
+          <tr><td class='pull-left'>Subtotal:</td> <td class='pull-right subtotal'>${{ order.subtotal|floatformat:2 }}</td></tr>
+            <tr><td class='pull-left'>Taxes:</td> <td class='pull-right taxes'>${{ order.taxes|floatformat:2 }}</td></tr>
+            <tr><td class='pull-left'>Total:</td> <td class='pull-right total'>${{ order.total|floatformat:2 }}</td></tr>
+            {% if request.user.is_authenticated %}
+            <tr><td></td><td><a href='{% url "orders:auth_checkout" order.id %}' class='btn btn-success'>Go To Checkout</a></td></tr>
+          {% elif request.user.is_authenticated == False %}
+            <tr><td></td><td><a href='{% url "orders:add_info" order.id %}' class='btn btn-success'>Go To Checkout</a></td></tr>
+          {% endif %}
+      </table>
+          </div>
+    {% endif %}
+    
+
+ 
+        
+        
+            
+        
+        
+        
+        
+        
+           
+    
+
+    
+<br/><br/><br/><br/><br/><br/><br/><br/><br/>
+<br/><br/><br/><br/><br/><br/><br/><br/><br/>
+
+<div id="dialog">
+ 
+  <div>
+    {% if address_checked == True %}
+        
+        
+        
+        
+        <form method='POST' action='menu_home/add_pizza'>{% csrf_token %} {{ add_pizza_form.as_p }}
+    <input class='btn btn-danger' type='submit' value='Add to Order'/></form>
+        
+        
+    <button class='btn btn-warning cancel'>Cancel</button>
+    
+    
+    {% else %}
+      
+      <form method='POST' action='menu_home/check_address'>{% csrf_token %}
+      {{ address_form.as_p }}
+    <input class='btn btn-danger' type='submit' value='Check my address'/></form>
+      
+      <button class='btn btn-warning cancel'>Cancel</button>
+{% endif %}
+  </div>
+</div>
+ 
+<div id="dialog-2" title="Edit Item">
+ 
+  <div>
+
+        
+        
+        
+        
+        <form method='POST' action='menu_home/edit_line_item'>{% csrf_token %} {{ edit_pizza_form.as_p }}
+    <input class='btn btn-danger' type='submit' value='Submit Changes'/></form>
+        
+        
+    <button class='btn btn-warning cancel'>Cancel</button>
+    
+    
+
+
+  </div>
+</div>
+
+
+<div id="dialog-check-address" title="Edit Item">
+ 
+  <div>
+
+        
+        
+        
+      <form method='POST' action='menu_home/change_address'>{% csrf_token %}
+      {{ address_form.as_p }}
+    <input class='btn btn-danger' type='submit' value='Check my address'/></form>
+
+      <button class='btn btn-warning cancel'>Cancel</button>
+    
+    
+
+
+  </div>
+</div>
+
+<div id="dialog-add-note" title="Notes">
+ 
+  <div>
+
+        
+        
+        
+      <form method='POST' action='menu_home/add_note'>{% csrf_token %}
+      {{ add_note_form.as_p }}
+    <input class='btn btn-danger' type='submit' value='Update'/></form>
+
+      <button class='btn btn-warning cancel'>Cancel</button>
+    
+    
+
+
+  </div>
+</div> 
+ 
+
+
+<br/><br/><br/>  
+    
+<div class='container'>    
+{% endblock %}
+
+    
+
+{% block footer %}
+    {% include 'footer.html'%}
+    </div>
+{% endblock %}
+
+
+
+

@@ -1,0 +1,209 @@
+{% extends 'base.html'%}
+
+{% block title %}
+    
+    <title>Add/Edit Products</title>
+    
+    
+{% endblock %}
+{% block jquery %}
+$('.pickup').click(function(){
+    var orderid = $(this).attr("data-orderid");
+    $.ajax({
+      type:'GET',
+      url:'/menu/set_pickup/',
+      success: function(data){
+      
+      var subtotal = parseFloat(data.subtotal)
+      var taxes = parseFloat(data.taxes)
+      var total = parseFloat(data.total)
+      $('tr.delivery-charge').hide()
+      $('td.subtotal').text('$' + subtotal.toFixed(2))
+      $('td.taxes').text('$' + taxes.toFixed(2))
+      $('td.total').text('$' + total.toFixed(2))
+      $('.pickup').removeClass('btn-default')
+      $('.pickup').addClass('btn-success')
+      $('.delivery').removeClass('btn-success')
+      $('.delivery').addClass('btn-default')
+     }
+     })
+});
+    
+$(function() {
+    $( "#dialog-info" ).dialog({
+      autoOpen: false,
+      modal: true,
+      show: {
+        effect: "blind",
+        duration: 200
+      },
+      hide: {
+        effect: "explode",
+        duration: 200
+      }
+    });
+    $( "#dialog-edit" ).dialog({
+      autoOpen: false,
+      modal: true,
+      show: {
+        effect: "blind",
+        duration: 200
+      },
+      hide: {
+        effect: "explode",
+        duration: 200
+      }
+    });
+
+    $( "#dialog-create" ).dialog({
+      autoOpen: false,
+      modal: true,
+      show: {
+        effect: "blind",
+        duration: 200
+      },
+      hide: {
+        effect: "explode",
+        duration: 200
+      }
+    });
+    
+    $( ".info" ).click(function() {
+    var desc = $(this).attr('desc')
+
+        $('#dialog-info').append('<p>'+ desc + '</p>');
+
+      $( "#dialog-info" ).dialog( "open" );
+      
+    });
+    
+  
+    
+    $( ".edit" ).click(function() {
+    var dataid = $(this).attr('data-id')
+    var typeid = $(this).attr('type-id')
+    var nameid = $(this).attr('name-id')
+        console.log(dataid)
+        console.log(typeid)
+      $('#dialog-edit form').attr('action','/menu/' + typeid + '/edit_product')
+      $('input#id_product').val(dataid)
+      $('input#id_name').val(nameid)
+      $('input#id_name').hide()
+      $('label[for=id_name]').hide()
+      $( "#dialog-edit" ).dialog( "open" );
+      
+    });
+    
+    $( ".create" ).click(function() {
+    var dataid = $(this).attr('data-id')
+    var typeid = $(this).attr('type-id')
+        console.log(dataid)
+        console.log(typeid)
+      $('#dialog-create form').attr('action','/menu/' + typeid + '/create_product')
+      $('input#id_product').val(dataid)
+      $('input#id_name').show()
+      $('label[for=id_name]').show()
+      $( "#dialog-create" ).dialog( "open" );
+      
+    });
+ 
+
+
+  });
+    
+    
+    
+    
+
+{% endblock %}    
+
+
+
+
+{% block content %}
+    
+
+
+
+
+
+
+    
+    
+
+  <!-- Table -->
+  <table class="table">
+    <thead>
+        <th>Product</th>
+        <th>Description</th>
+        <th>Active?</th>
+        <th>Small Price</th>
+        <th>Medium Price</th>
+        <th>Large Price</th>
+        <th>XL Price</th>
+        <th>Jumbo Price</th>
+        <th>Edit</th>
+    </thead>
+    <tbody>
+        {% for object in object_list %}
+        <tr class='product-type' ><td>{{object}}</td>
+            <td><button class='btn btn-info info' desc='{{object.description}}'>View</button></td>
+            <td>{% if object.active == True %}Active{% else %}Inactive{% endif %}</td>
+            <td>${{object.small_price|floatformat:2}}</td>
+            <td>${{object.medium_price|floatformat:2}}</td>
+            <td>${{object.large_price|floatformat:2}}</td>
+            <td>${{object.xl_price|floatformat:2}}</td>
+            <td>${{object.jumbo_price|floatformat:2}}</td>
+            <td><button class='btn btn-info edit' name-id='{{ object.name }}'data-id='{{ object.id}}' type-id='{{ object.product_type }}'>Edit</button></td>
+        </tr>
+        
+    {% endfor %}
+    <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td><button class='btn btn-default create' type-id='{{ exp }}'>Add New Product</button></td>
+        
+        
+    </tr>
+    </tbody>
+    
+  </table>
+</div>
+<!-- DIALOGS-->
+<div id="dialog-info" title="Description">
+ 
+  <div>
+
+      
+  </div>
+</div> 
+
+<div id="dialog-edit" title="Edit Product">
+ 
+  <div>
+<form class='edit-form' method='POST'>{% csrf_token %}
+      {{ form.as_p }}
+      <input class='btn btn-success' type='submit' value='Update'/></form>
+  </div>
+</div> 
+
+<div id="dialog-create" title="Create Product">
+ 
+  <div>
+<form class='create-form' method='POST'>{% csrf_token %}
+      {{ form.as_p }}
+      <input class='btn btn-success' type='submit' value='Update'/></form>
+  </div>
+</div> 
+
+
+
+
+    
+{% endblock %}    
